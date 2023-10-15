@@ -1,0 +1,10 @@
+:~
+  title+'hydra'
+  info+'make it spin'
+  color+0xee.5432
+  version+[0 0 1]
+  website+'https://github.com/SuperCoolYun'
+  license+'MIT'
+  base+'hydra'
+  site+/apps/hydra
+==
