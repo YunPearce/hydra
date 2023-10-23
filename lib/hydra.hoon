@@ -1,13 +1,18 @@
 |%
++$  sketch
+  [name=@t code=@t]
+::
 +$  action
   $%
-  [%new-sketch id=@t hash=@t]
+  [%new-sketch sketch]
+  [%scry-pals ~]
+  [%get-sketch ship]   ::@t (unit @t)]
   :: [%to-sketch id=@t code=@t]
   ==
 ::
 +$  update
-  $%
-  [%playing id=@t]
+  $%                  
+  [%playing sketch]
   [%store sketches=(list @t)]
   ==
 ::
@@ -21,7 +26,7 @@
     (action json)
     ++  action
     %-  of 
-    :~  [%new-sketch store-pair]
+    :~  [%new-sketch sketch]
         :: [%to-sketch hash]
     ==
     :: ++  hash
@@ -29,9 +34,9 @@
     :: :~  [%parent so]
     ::     [%code so]
     :: ==
-    ++  store-pair
+    ++  sketch
     %-  ot 
-    :~  [%id so]
+    :~  [%name so]
         [%code so]
     ==
     --
@@ -46,7 +51,8 @@
   ?-  -.update 
   %playing
   %-  pairs 
-  :~  :-  'playing'  s+id.update
+  :~  :-  'playing'  s+name.update
+      :-  'code'     s+code.update
   ==
   %store
   %-  frond

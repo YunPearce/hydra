@@ -1,4 +1,4 @@
-/+  default-agent, dbug, *hydra, server, schooner
+/+  default-agent, dbug, *hydra, server, schooner, view
 /*  hydraui         %html  /app/hydra/index/html
 /*  hydrajs         %js    /app/hydra/bundle/js
 /*  cssfontawesome  %css   /app/hydra/css/fontawesome/css
@@ -17,6 +17,7 @@
                     host=@p
                     playing=@t         ::id, updated by saving sketch or by sharing code
                     store=(map @t @t)  ::store=(map id hash/code)
+                    dj-pals=(map @p sketch)
                     ==
 +$  card  card:agent:gall
 --  
@@ -35,6 +36,7 @@
   ^-  (quip card _this)
   ::`this
   ~&  >  "hydra initialized successfully."
+  =.  host  our.bowl
   :_  this
   :~  [%pass /eyre %arvo %e %connect [~ /apps/hydra] %hydra]
   ==
@@ -61,15 +63,35 @@
 ~&  mark
 ?+  mark  (on-poke:def mark vase)
   %hydra-action
-  =/  action=action   !<(action vase)
+  =/  =action   !<(action vase)
   ?-  -.action
   ::[%new-sketch id=@t hash=@t]
   %new-sketch
-  =.  store  (~(put by store) id.action hash.action)
-  ?:  =(id.action 'sketch_id')
+  =.  store  (~(put by store) name.action code.action)
+  ?:  =(name.action 'sketch_id')
     `this
-  =.  playing  id.action
+  =.  playing  name.action
   `this
+  ::
+  ::  scry-pals scrtying for pals sending poke with current playing pair(if has one) if active get's poke back and subsc
+  ::
+  %scry-pals
+  =/  our  (scot %p our.bowl)
+  =/  pals  .^((set ship) %gx /[our]/pals/(scot %da now.bowl)/mutuals/noun)
+  ::~&  pals
+  :: =/  pals  (silt ~[~zod])
+  :_  this
+  %+  turn  ~(tap in pals) 
+  |=(pal=@p [%pass /poke/pal/(scot %p pal) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])]) ::scry path perhaps scry to each pal to get pair 
+  ::
+  ::
+  %get-sketch 
+  =/  dj-pal  (~(get by dj-pals) +.action)
+  ?~  dj-pal  `this  
+  :_  this
+  ::subscribe here to ship.action
+  :~  [%pass /subscribtion/to/(scot %p +.action) %agent [+.action %hydra] %watch /updates]
+  ==
   ==
   ::
   %handle-http-request
@@ -95,14 +117,11 @@
     (on-poke [%hydra-action !>(action)])
     ::instead of on-peek 
     ::`this
-    %'GET'
+      %'GET'
     ~&  site
-    ?+  site  
-              :_  this
-              %-  send
-              dump
+    ?+  site  [(send dump) this]
+    ::
     [%apps %hydra ~]
-    ::FOR NOW
       ?:  |(=(~ playing) =('sketch_id' playing))
       :_  this 
       %-  send 
@@ -121,52 +140,52 @@
       [200 ~ [%html hydraui]]
     ::
     [%apps %hydra %editor %bundle %js ~]
-    :_  this 
-    %-  send 
-    [200 ~ [%plain (trip hydrajs)]]
+      :_  this 
+      %-  send 
+      [200 ~ [%plain (trip hydrajs)]]
     ::
     [%apps %hydra %editor %webfonts %ttf * ~]
-    :_  this 
-    %-  send
-    (ttffronts site)
+      :_  this 
+      %-  send
+      (ttffronts site)
     ::
     [%apps %hydra %editor %css * ~]
-    :_  this 
-    %-  send
-    (hydra-css site)
+      :_  this 
+      %-  send
+      (hydra-css site)
     ::
     [%apps %hydra %editor %webfonts * ~]
-    :_  this 
-    %-  send
-    (webfronts site)
-    ::
-    ::  list od sketches
-    ::
-    [%apps %hydra %my-lib ~]
-    =/  sketches  ~(tap in ~(key by store))
-    :_  this
-    %-  send
-    [200 ~ [%json (update-to-json:enjs [%store sketches])]]
-    ::
-    ::  current playing
-    ::
-    [%apps %hydra %playing ~]
-      :_  this
+      :_  this 
       %-  send
-      [200 ~ [%json (update-to-json:enjs [%playing id=playing])]]
+      (webfronts site)
+    ::
+    ::store frontend
+    ::
+    [%apps %hydra %library ~]
+      :_  this
+      %-  send 
+      [200 ~ [%manx ~(home view state)]]
+    ::
+    ::  list of sketches
+    ::
+    :: [%apps %hydra %my-lib ~]
+    ::   =/  sketches  ~(tap in ~(key by store))
+    ::   :_  this
+    ::   %-  send
+    ::   [200 ~ [%json (update-to-json:enjs [%store sketches])]]
     ==
   ==
 --
-++  on-peek   
-|=  =path
-^-  (unit (unit cage))
-?+  path  (on-peek:def path)
-::current id(?) playing 
-  [%x %playing ~]
-  :^  ~  ~  %hydra-update
-  !>  ^-  update
-  [%playing id=playing]
-==
+++  on-peek   on-peek:def
+:: |=  =path
+:: ^-  (unit (unit cage))
+:: ?+  path  (on-peek:def path)
+:: ::current id(?) playing 
+::   [%x %playing ~]
+::   :^  ~  ~  %hydra-update
+::   !>  ^-  update
+::   [%playing =playing =(need (~(get by store) playing))]
+:: ==
 ::
 ++  on-watch  
 |=  =path
@@ -174,9 +193,17 @@
 ?+    path  (on-watch:def path)
     [%http-response *]
   ?:  =(our src):bowl
-    `this
+    `this         
   (on-watch:def path)
+  ::
+    [%updates ~] 
+    =/  code  (need (~(get by store) playing))
+    :_  this
+    :~  [%give %fact ~ %hydra-update !>([%playing playing code])]
 ==
+==
+::
+::
 ++  on-agent  
 |=  [=wire =sign:agent:gall]
 ^-  (quip card _this)
@@ -188,14 +215,40 @@
     ((slog '%hydra: Subscribe succeeded!' ~) `this)
   ((slog '%hydra: Subscribe failed!' ~) `this)
   ==
-  [%thread ~]
-  ?+    -.sign  (on-agent:def wire sign)
-    %poke-ack
-  ?~  p.sign  
-    %-  (slog leaf+"Thread started successfully" ~)
-    `this
-  %-  (slog leaf+"Thread failed to start" u.p.sign)
+  ::
+  [%poke %pal * ~]
+  ?.  ?=(%poke-ack -.sign)
+    (on-agent:def wire sign)
+  ?~  p.sign
+    ~&  ['pal @p' +.+.wire]
+    ::here if responde adding to pals 
+    =/  path=[@t @t pal=@t ~]  wire
+    =/  =ship  `ship`(slav %p pal.path)
+    :_  this
+    :~  [%pass /subscribtion/to/(scot %p ship) %agent [ship %hydra] %watch /updates]
+    ==
+  ::%-  (slog 'poke failed!' ~)
   `this
+  ::
+  [%subscribtion %to * ~]
+    ?+  -.sign  (on-agent:def wire sign)
+      %watch-ack
+    ?~  p.sign
+      ((slog 'Subscribe succeeded!' ~) `this)
+    ((slog 'Subscribe failed!' ~) `this)
+  ::
+      %fact
+    ?+    p.cage.sign  (on-agent:def wire sign)
+        %hydra-update
+      =/  path=[@t @t pal=@t ~]  wire
+      =/  =ship  `ship`(slav %p pal.path)
+      =/  =update  !<(update q.cage.sign)  ::[%playing name=@t code=@t]
+      ?+  -.update   (on-agent:def wire sign)
+        %playing
+        =.  dj-pals  (~(put by dj-pals) ship +.update)
+        `this
+      ==
+    ==
   ==
 ==
 ++  on-arvo   ::on-arvo:def
@@ -216,17 +269,6 @@
 ::++  hc
 ::
 |_  bowl=bowl:gall
-::
-  ::
-  ++  give-http
-    |=  [eyre-id=@ta hed=response-header:http dat=(unit octs)]
-    ^-  (list card)
-    ~&  hed
-    ~&  'give http'
-    :~  [%give %fact ~[/http-response/[eyre-id]] %http-response-header !>(hed)]
-        [%give %fact ~[/http-response/[eyre-id]] %http-response-data !>(dat)]
-        [%give %kick ~[/http-response/[eyre-id]] ~]
-    ==
 ::
 ++  dump  [404 ~ [%plain "404 - Not Found"]]
 ++  hydra-css
@@ -263,4 +305,9 @@
     %fa-solid-900
     [200 ~ [%font-ttf q.solidttf]]
   ==
+:: ++  patp-from-wire 
+:: |=  =wire
+:: ^-  ship
+:: =/  path=[@t @t pal=@t ~]  wire
+:: `ship`(slav %p pal.path)
 --
