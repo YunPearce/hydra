@@ -39,6 +39,7 @@
   =.  host  our.bowl
   :_  this
   :~  [%pass /eyre %arvo %e %connect [~ /apps/hydra] %hydra]
+      [%pass /self %agent [our.bowl %hydra] %poke %hydra-action !>([%scry-pals ~])]
   ==
 ::
 ++  on-save  
@@ -78,7 +79,7 @@
   %scry-pals
   =/  our  (scot %p our.bowl)
   =/  pals  .^((set ship) %gx /[our]/pals/(scot %da now.bowl)/mutuals/noun)
-  ::~&  pals
+  ~&  pals
   :: =/  pals  (silt ~[~zod])
   :_  this
   %+  turn  ~(tap in pals) 
@@ -215,6 +216,15 @@
     ((slog '%hydra: Subscribe succeeded!' ~) `this)
   ((slog '%hydra: Subscribe failed!' ~) `this)
   ==
+  ::
+  [%self ~]
+  ?.  ?=(%poke-ack -.sign)
+  (on-agent:def wire sign)
+  ?~  p.sign
+    %-  (slog 'poke self success' ~)
+    `this
+  %-  (slog 'poke self fail' ~)
+  `this
   ::
   [%poke %pal * ~]
   ?.  ?=(%poke-ack -.sign)
