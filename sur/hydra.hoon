@@ -3,13 +3,13 @@
   [name=@t code=@t]
 +$  action
   $%
-  [%new-sketch sketch]
+  [%new-sketch =sketch]
   [%scry-pals ~]
-  [%get-sketch ship] 
+  [%get-sketch =ship] 
   ==
 +$  update  
 $%                  
-  [%playing sketch]
+  [%playing =sketch]
   [%store sketches=(list @t)]
   ==
 --

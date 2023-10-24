@@ -1,10 +1,10 @@
+/-  hydra
 /+  *hydra
-/-  *hydra
-|_  upd=update
+|_  upd=update:hydra
 ++  grow
   |%
   ++  noun  upd
-  ++  json  (update-to-json:enjs upd)
+  ++  json  update-to-json:enjs
   --
 ++  grab
   |%

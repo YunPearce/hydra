@@ -1,9 +1,10 @@
-/+  *hydra
+/-  *hydra
+/+  hydra
 |_  =action
 ++  grab
   |%
   ++  noun  action
-  ++  json  decode:dejs 
+  ++  json  decode:dejs:hydra
   --
 ++  grow
   |%

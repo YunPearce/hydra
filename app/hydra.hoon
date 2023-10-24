@@ -1,3 +1,4 @@
+/-  hydra
 /+  default-agent, dbug, *hydra, server, schooner, view
 /*  hydraui         %html  /app/hydra/index/html
 /*  hydrajs         %js    /app/hydra/bundle/js
@@ -8,7 +9,7 @@
 /*  cssstyle        %css   /app/hydra/css/style/css
 /*  cssmodal        %css   /app/hydra/css/modal/css
 /*  solidttf        %ttf   /app/hydra/webfonts/fa-solid-900/ttf
-/*  solidsvg        %svg   /app/hydra/webfonts/fa-solid-900/svg
+/*  solidsvg        %svg   /app/hydra/webfonts/fa-solid-900/svg 
 |%
 +$  versioned-state 
   $%  state-0
@@ -17,7 +18,7 @@
                     host=@p
                     playing=@t         ::id, updated by saving sketch or by sharing code
                     store=(map @t @t)  ::store=(map id hash/code)
-                    dj-pals=(map @p sketch)
+                    dj-pals=(map @p sketch:hydra)
                     ==
 +$  card  card:agent:gall
 --  
@@ -64,7 +65,7 @@
 ~&  mark
 ?+  mark  (on-poke:def mark vase)
   %hydra-action
-  =/  =action   !<(action vase)
+  =/  action=action:hydra   !<(action:hydra vase)
   ?-  -.action
   ::[%new-sketch id=@t hash=@t]
   %new-sketch
@@ -84,7 +85,7 @@
   |=(pal=@p [%pass /poke/pal/(scot %p pal) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])])
   ~&  ['pal cards' pal-cards]
   :_  this
-  ~
+  pal-cards
   ::
   ::
   %get-sketch 
@@ -117,7 +118,7 @@
       %'POST'
     ?~  body.request.inbound-request  [(send [405 ~ [%stock ~]]) this]
     =/  json  (de:json:html q.u.body.request.inbound-request)
-    =/  =action  (decode:dejs +.json)
+    =/  action  (decode:dejs +.json)
     (on-poke [%hydra-action !>(action)])
     ::instead of on-peek 
     ::`this
@@ -204,7 +205,7 @@
     ~&  'comet subscriber here to watch'
     =/  code  (need (~(get by store) playing))
     :_  this
-    :~  [%give %fact ~ %hydra-update !>(`update`[%playing [playing code]])]
+    :~  [%give %fact ~ %hydra-update !>(`update:hydra`[%playing [playing code]])]
 ==
 ==
 ::
@@ -234,7 +235,7 @@
   ?.  ?=(%poke-ack -.sign)
     (on-agent:def wire sign)
   ?~  p.sign
-    ~&  ['pal @p' +.+.wire]
+    ~&  ['poke-pal @p' +.+.wire]
     ::here if responde adding to pals 
     =/  path=[@t @t pal=@t ~]  wire
     =/  =ship  `ship`(slav %p pal.path)
@@ -255,9 +256,9 @@
     ?+    p.cage.sign  (on-agent:def wire sign)
         %hydra-update
       =/  path=[@t @t pal=@t ~]  wire
-      =/  =ship  `ship`(slav %p pal.path)
-      =/  =update  !<(update q.cage.sign)  ::[%playing name=@t code=@t]
-      ?+  -.update   (on-agent:def wire sign)
+      =/  =ship        `ship`(slav %p pal.path)  
+      =/  update=update:hydra  !<(update:hydra q.cage.sign)  ::[%playing name=@t code=@t]
+      ?+  -.update     (on-agent:def wire sign)
         %playing
         =.  dj-pals  (~(put by dj-pals) ship +.update)
         `this
