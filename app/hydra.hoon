@@ -68,31 +68,34 @@
   ?-  -.action
   ::[%new-sketch id=@t hash=@t]
   %new-sketch
-  =.  store  (~(put by store) name.action code.action)
-  ?:  =(name.action 'sketch_id')
+  =.  store  (~(put by store) name.sketch.action code.sketch.action)
+  ?:  =(name.sketch.action 'sketch_id')
     `this
-  =.  playing  name.action
+  =.  playing  name.sketch.action
   `this
   ::
-  ::  scry-pals scrtying for pals sending poke with current playing pair(if has one) if active get's poke back and subsc
   ::
   %scry-pals
   =/  our  (scot %p our.bowl)
   =/  pals  .^((set ship) %gx /[our]/pals/(scot %da now.bowl)/mutuals/noun)
-  ~&  pals
+  ~&  ['pals' pals]
   :: =/  pals  (silt ~[~zod])
+  =/  pal-cards  %+  turn  ~(tap in pals) 
+  |=(pal=@p [%pass /poke/pal/(scot %p pal) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])])
+  ~&  ['pal cards' pal-cards]
   :_  this
-  %+  turn  ~(tap in pals) 
-  |=(pal=@p [%pass /poke/pal/(scot %p pal) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])]) ::scry path perhaps scry to each pal to get pair 
+  ~
   ::
   ::
   %get-sketch 
   =/  dj-pal  (~(get by dj-pals) +.action)
+  ~&  dj-pal
   ?~  dj-pal  `this  
   :_  this
+  ~
   ::subscribe here to ship.action
-  :~  [%pass /subscribtion/to/(scot %p +.action) %agent [+.action %hydra] %watch /updates]
-  ==
+  :::~  [%pass /subscribtion/to/(scot %p +.action) %agent [+.action %hydra] %watch /updates]
+  ::==
   ==
   ::
   %handle-http-request
@@ -198,9 +201,10 @@
   (on-watch:def path)
   ::
     [%updates ~] 
+    ~&  'comet subscriber here to watch'
     =/  code  (need (~(get by store) playing))
     :_  this
-    :~  [%give %fact ~ %hydra-update !>([%playing playing code])]
+    :~  [%give %fact ~ %hydra-update !>(`update`[%playing [playing code]])]
 ==
 ==
 ::

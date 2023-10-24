@@ -4,9 +4,9 @@
 ::
 +$  action
   $%
-  [%new-sketch sketch]
+  [%new-sketch =sketch]
   [%scry-pals ~]
-  [%get-sketch ship]   ::@t (unit @t)]
+  [%get-sketch =ship]   ::@t (unit @t)]
   :: [%to-sketch id=@t code=@t]
   ==
 ::
@@ -23,21 +23,30 @@
     ++  decode 
     |=  =json
     ^-  action
-    (action json)
-    ++  action
+    (de-action json)
+    ++  de-action
     %-  of 
-    :~  [%new-sketch sketch]
-        :: [%to-sketch hash]
+    :~  [%new-sketch to-sketch]
+        [%scry-pals ul]
+        [%get-sketch to-ship]
     ==
     :: ++  hash
     :: %-  ot 
     :: :~  [%parent so]
     ::     [%code so]
-    :: ==
-    ++  sketch
+    :: ==z
+    ++  to-ship
+    %-  ot
+    :~  :-  'ship'
+    (se %p)
+    ==
+    ++  to-sketch
     %-  ot 
-    :~  [%name so]
-        [%code so]
+    :~  :-  'sketch'
+      %-  ot 
+      :~  [%name so]
+          [%code so]
+      ==
     ==
     --
 ::
