@@ -1,6 +1,6 @@
-/-  hydra
+/-  *hydra
 /+  *hydra
-|_  upd=update:hydra
+|_  upd=update
 ++  grow
   |%
   ++  noun  upd

@@ -1,22 +1,5 @@
 /-  *hydra
 |%
-::+$  sketch
-::   [name=@t code=@t]
-:: ::
-:: +$  action
-::   $%
-::   [%new-sketch =sketch]
-::   [%scry-pals ~]
-::   [%get-sketch =ship]   ::@t (unit @t)]
-::   :: [%to-sketch id=@t code=@t]
-::   ==
-:: ::
-:: +$  update
-::   $%                  
-::   [%playing sketch]
-::   [%store sketches=(list @t)]
-::   ==
-::
 ++  dejs
   =,  dejs:format
   |%
@@ -31,19 +14,14 @@
         [%scry-pals ul]
         [%get-sketch to-ship]
     ==
-    :: ++  hash
-    :: %-  ot 
-    :: :~  [%parent so]
-    ::     [%code so]
-    :: ==
     ++  to-ship
     %-  ot
-    :~  :-  'ship'
+    :~  :-  %ship
     (se %p)
     ==
     ++  to-sketch
     %-  ot 
-    :~  :-  'sketch'
+    :~  :-  %sketch
       %-  ot 
       :~  [%name so]
           [%code so]
