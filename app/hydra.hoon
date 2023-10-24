@@ -73,7 +73,9 @@
   ?:  =(name.sketch.action 'sketch_id')
     `this
   =.  playing  name.sketch.action
-  `this
+  :_  this
+  :~  [%give %fact ~[/updates] %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code=code.sketch.action]])]
+  ==
   ::
   ::
   %scry-pals
@@ -116,7 +118,9 @@
       %'POST'
     ?~  body.request.inbound-request  [(send [405 ~ [%stock ~]]) this]
     =/  json  (de:json:html q.u.body.request.inbound-request)
-    =/  action  (decode:dejs +.json)
+    ~&  json
+    =/  =action:hydra  (decode:dejs +.json)
+    ~&  action
     (on-poke [%hydra-action !>(action)])
     ::instead of on-peek 
     ::`this
@@ -201,9 +205,14 @@
   ::
     [%updates ~] 
     ~&  'comet subscriber here to watch'
-    =/  code  (need (~(get by store) playing))
+    =/  code  (~(get by store) playing)
+    ?~  code  
+      :_  this
+      :~  [%give %fact ~ %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code='']])]
+      ==
+    ~&  ['update' `update:hydra`[%playing sketch=[name=playing code=(need code)]]]
     :_  this
-    :~  [%give %fact ~ %hydra-update !>(`update:hydra`[%playing [playing code]])]
+    :~  [%give %fact ~ %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code=(need code)]])]
 ==
 ==
 ::

@@ -20,13 +20,10 @@
     (se %p)
     ==
     ++  to-sketch
-    %-  ot 
-    :~  :-  %sketch
       %-  ot 
       :~  [%name so]
           [%code so]
       ==
-    ==
     --
 ::
 ++  enjs
