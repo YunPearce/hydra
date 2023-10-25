@@ -39,8 +39,17 @@
       ~(tap by store)
     |=  [name=@t hash=@t]
     ;div.each(sketch (trip name))
-        ;a(href (weld path (trip hash))): "{(trip name)}"
+        ;a(href (weld path (trip hash))): {(trip name)}
     ==
+  ;h1: Pals new sketches:
+    ;*  %+  turn
+      ~(tap by dj-pals)
+    |=  [pal=@p sketch=[name=@t hash=@t]]
+    ;div.each(pal (trip pal))
+    ::FIX if null no song or pal show
+        ;h3: {(scow %p pal)}
+        ;a(href (weld path (trip hash.sketch))): {(trip name.sketch)}
+  ==
   ==
 ++  style
   ^~

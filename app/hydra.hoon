@@ -83,7 +83,7 @@
   =/  pals  .^((set ship) %gx /[our]/pals/(scot %da now.bowl)/mutuals/noun)
   ~&  ['pals' pals]
   =/  pal-cards  %+  turn  ~(tap in pals) 
-  |=(pal=@p [%pass /poke/pal/(scot %p pal) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])])
+  |=(pal=@p [%pass /poke/pal/(scot %p pal)/(scot %da now.bowl) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])])
   ~&  ['pal cards' pal-cards]
   :_  this
   pal-cards
@@ -238,13 +238,13 @@
   %-  (slog 'poke self fail' ~)
   `this
   ::
-  [%poke %pal * ~]
+  [%poke %pal * * ~]
   ?.  ?=(%poke-ack -.sign)
     (on-agent:def wire sign)
   ?~  p.sign
     ~&  ['poke-pal @p' +.+.wire]
     ::here if responde adding to pals 
-    =/  path=[@t @t pal=@t ~]  wire
+    =/  path=[@t @t pal=@t @t ~]  wire
     =/  =ship  `ship`(slav %p pal.path)
     :_  this
     :~  [%pass /subscribtion/to/(scot %p ship) %agent [ship %hydra] %watch /updates]
