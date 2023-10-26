@@ -1,4 +1,4 @@
-/-  hydra
+/-  *hydra
 /+  default-agent, dbug, *hydra, server, schooner, view
 /*  hydraui         %html  /app/hydra/index/html
 /*  hydrajs         %js    /app/hydra/bundle/js
@@ -17,8 +17,10 @@
 +$  state-0  $:  %0 
                     host=@p
                     playing=@t         ::id, updated by saving sketch or by sharing code
-                    store=(map @t @t)  ::store=(map id hash/code)
-                    dj-pals=(map @p sketch:hydra)
+                    
+                    ::store=(map @t @t)  ::store=(map id hash/code)
+                    store=(map @t [@t tag])
+                    dj-pals=(map @p (list sketch))
                     ==
 +$  card  card:agent:gall
 --  
@@ -65,22 +67,27 @@
 ~&  mark
 ?+  mark  (on-poke:def mark vase)
   %hydra-action
-  =/  action=action:hydra   !<(action:hydra vase)
+  =/  action=action   !<(action vase)
   ?-  -.action
   ::[%new-sketch id=@t hash=@t]
   %new-sketch
-  =.  store  (~(put by store) name.sketch.action code.sketch.action)
+  =.  store  (~(put by store) name.sketch.action [code.sketch.action %wip])
   ?:  =(name.sketch.action 'sketch_id')
     `this
+  =/  public=(list sketch)  (public-sketches store)
   =.  playing  name.sketch.action
   :_  this
-  :~  [%give %fact ~[/updates] %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code=code.sketch.action]])]
+  :~  [%give %fact ~[/updates] %hydra-update !>(`update`[%playing public])]
+  :::~  [%give %fact ~[/updates] %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code=code.sketch.action]])]
   ==
   ::
   ::
   %scry-pals
   =/  our  (scot %p our.bowl)
   =/  pals  .^((set ship) %gx /[our]/pals/(scot %da now.bowl)/mutuals/noun)
+  ::  remove old-pals(pals from map) from pals 
+  =.  pals  `(set @p)`(~(dif in pals) ~(key by dj-pals))
+  ::
   ~&  ['pals' pals]
   =/  pal-cards  %+  turn  ~(tap in pals) 
   |=(pal=@p [%pass /poke/pal/(scot %p pal)/(scot %da now.bowl) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])])
@@ -88,15 +95,20 @@
   :_  this
   pal-cards
   ::
-  %get-sketch 
+  %get-sketch
+  ~&  '%get-sketch' 
   =/  dj-pal  (~(get by dj-pals) +.action)
   ~&  ['dj-pal' dj-pal]
   ?~  dj-pal  `this  
   :_  this
-  ::~
   ::subscribe here to ship.action
   :~  [%pass /subscribtion/to/(scot %p +.action) %agent [+.action %hydra] %watch /updates]
   ==
+  %to-public
+  =/  [code=@t =tag]  (~(got by store) +.action)
+    ~&  ['%to-public' action sketch]
+  =.  store  (~(put by store) +.action [code %public])
+  `this
   ==
   ::
   %handle-http-request
@@ -119,7 +131,7 @@
     ?~  body.request.inbound-request  [(send [405 ~ [%stock ~]]) this]
     =/  json  (de:json:html q.u.body.request.inbound-request)
     ~&  json
-    =/  =action:hydra  (decode:dejs +.json)
+    =/  =action  (decode:dejs (need json))
     ~&  action
     (on-poke [%hydra-action !>(action)])
     ::instead of on-peek 
@@ -133,7 +145,7 @@
       :_  this 
       %-  send 
     [302 ~ [%redirect './hydra/editor/']]
-      =/  sketch  (trip (need (~(get by store) playing)))
+      =/  sketch  (trip -:(need (~(get by store) playing)))
       =/  path    (crip (weld "./hydra/editor/?sketch_id=" sketch))
         :_  this
         %-  send 
@@ -170,6 +182,9 @@
     ::
     [%apps %hydra %library ~]
       :_  this
+      %+  welp
+      ::adedd poke to get new pals on load of page
+      [%pass /self %agent [our.bowl %hydra] %poke %hydra-action !>([%scry-pals ~])]~
       %-  send 
       [200 ~ [%manx ~(home view state)]]
     ::
@@ -205,14 +220,15 @@
   ::
     [%updates ~] 
     ~&  'comet subscriber here to watch'
-    =/  code  (~(get by store) playing)
-    ?~  code  
+    =/  sketches=(list sketch)  (public-sketches store)
+    ?~  sketches
       :_  this
-      :~  [%give %fact ~ %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code='']])]
+      :~  [%give %fact ~ %hydra-update !>(`update`[%playing ~])]
       ==
-    ~&  ['update' `update:hydra`[%playing sketch=[name=playing code=(need code)]]]
+    ::=/  code  -:(need c-sketch)
+        ~&  ['update' `update`[%playing sketches]]
     :_  this
-    :~  [%give %fact ~ %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code=(need code)]])]
+    :~  [%give %fact ~ %hydra-update !>(`update`[%playing sketches])]
 ==
 ==
 ::
@@ -269,7 +285,7 @@
         ~&  'hydra update'
       =/  path=[@t @t pal=@t ~]  wire
       =/  =ship        `ship`(slav %p pal.path)  
-      =/  update=update:hydra  !<(update:hydra q.cage.sign)  ::[%playing name=@t code=@t]
+      =/  update=update  !<(update q.cage.sign)  ::[%playing name=@t code=@t]
       ~&  ['update' update]
       ?+  -.update     (on-agent:def wire sign)
         %playing
@@ -333,6 +349,17 @@
     %fa-solid-900
     [200 ~ [%font-ttf q.solidttf]]
   ==
+++  public-sketches 
+|=  =(map @t [@t tag])
+^-  (list sketch)
+=/  public=(list [@t [@t tag]])
+  %-  homo
+  %+  skim  ~(tap by store)
+    |=  a=[name=@t val=[=@t =tag]]
+    =(tag.val.a %public)
+%+  turn  public
+|=  [name=@t val=[code=@t =tag]]
+[name code.val]
 :: ++  patp-from-wire 
 :: |=  =wire
 :: ^-  ship

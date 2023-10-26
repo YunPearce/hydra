@@ -1,5 +1,5 @@
 /+  *hydra
-|_  [%0 * * store=(map @t @t) dj-pals=(map @p sketch)]
+|_  [%0 * * store=(map @t [@t tag]) dj-pals=(map @p (list sketch))]
 ::
 ++  page
   |=  kid=manx
@@ -35,20 +35,38 @@
   %-  page
   ;div
   ;h1: Sketches:
+  ;div.sketches
     ;*  %+  turn
       ~(tap by store)
-    |=  [name=@t hash=@t]
-    ;div.each(sketch (trip name))
-        ;a(href (weld path (trip hash))): {(trip name)}
-    ==
+    |=  [name=@t sketch=[hash=@t tag=tag]]
+    ^-  manx
+      ?:  =(tag.sketch %public)
+      ^-  manx
+      ::;div.each(sketch (trip name))
+        ;a(href (weld path (trip hash.sketch))): {(trip name)}
+        ::;h2: album {(scow %tas tag)}
+      ;div.each(sketch (trip name))
+        ;a(href (weld path (trip hash.sketch))): {(trip name)}
+        ::;h2: album {(scow %tas tag)}
+        ;form
+        ;input(type "hidden", name "to-public", value (trip name));
+        ;button(hx-post ".", hx-target "body"): share with pals
+        ==
+      ==
+  ==
   ;h1: Pals new sketches:
     ;*  %+  turn
       ~(tap by dj-pals)
-    |=  [pal=@p sketch=[name=@t hash=@t]]
+    |=  [pal=@p sketches=(list sketch)]
     ;div.each(pal (trip pal))
+      ;h3: {(scow %p pal)}v
+      ;*  %+  turn  sketches
+      |=  sketch=[name=@t code=@t]
+      ^-  manx
     ::FIX if null no song or pal show
-        ;h3: {(scow %p pal)}
-        ;a(href (weld path (trip hash.sketch))): {(trip name.sketch)}
+      ;div
+        ;a(href (weld path (trip code.sketch))): {(trip name.sketch)}
+      ==
   ==
   ==
 ++  style

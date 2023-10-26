@@ -13,6 +13,8 @@
     :~  [%new-sketch to-sketch]
         [%scry-pals ul]
         [%get-sketch to-ship]
+        [%to-public so]
+        ::[%to-public to-sketch]
     ==
     ++  to-ship
     %-  ot
@@ -35,10 +37,13 @@
   ::|^
   ?-  -.update 
   %playing
-  %-  pairs 
-  :~  :-  'playing'  s+name.sketch.update
-      :-  'code'     s+code.sketch.update
-  ==
+  :-  %a
+  %+  turn  +.update
+    |=  sketch=[name=@t code=@t]
+    %-  pairs 
+    :~  :-  'playing'  s+name.sketch
+        :-  'code'     s+code.sketch
+    ==
   %store
   %-  frond
   :-  'sketches'
