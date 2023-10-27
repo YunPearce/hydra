@@ -247,7 +247,7 @@
     =/  path=[@t @t pal=@t @t ~]  wire
     =/  =ship  `ship`(slav %p pal.path)
     :_  this
-    :~  [%pass /subscribtion/to/(scot %p ship)/(scot %da now.bowl) %agent [ship %hydra] %watch /updates]
+    :~  [%pass /subscribtion/to/(scot %p ship) %agent [ship %hydra] %watch /updates]
     ==
   ::%-  (slog 'poke failed!' ~)
   `this
