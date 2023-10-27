@@ -99,11 +99,12 @@
   ~&  '%get-sketch' 
   =/  dj-pal  (~(get by dj-pals) +.action)
   ~&  ['dj-pal' dj-pal]
-  ?~  dj-pal  `this  
+  ?~  dj-pal  
   :_  this
   ::subscribe here to ship.action
   :~  [%pass /subscribtion/to/(scot %p +.action) %agent [+.action %hydra] %watch /updates]
   ==
+  `this  
   %to-public
   =/  [code=@t =tag]  (~(got by store) +.action)
     ~&  ['%to-public' action sketch]
@@ -268,7 +269,7 @@
   ::%-  (slog 'poke failed!' ~)
   `this
   ::
-  [%subscribtion %to * ~]
+  [%subscribtion %to * * ~]
     ?+  -.sign  (on-agent:def wire sign)
       %watch-ack
     ?~  p.sign
@@ -283,7 +284,7 @@
     ?+    p.cage.sign  (on-agent:def wire sign)
         %hydra-update
         ~&  'hydra update'
-      =/  path=[@t @t pal=@t ~]  wire
+      =/  path=[@t @t pal=@t @t ~]  wire
       =/  =ship        `ship`(slav %p pal.path)  
       =/  update=update  !<(update q.cage.sign)  ::[%playing name=@t code=@t]
       ~&  ['update' update]
