@@ -74,12 +74,13 @@
   =.  store  (~(put by store) name.sketch.action [code.sketch.action %wip])
   ?:  =(name.sketch.action 'sketch_id')
     `this
-  =/  public=(list sketch)  (public-sketches store)
+  ::=/  public=(list sketch)  (public-sketches store)
   =.  playing  name.sketch.action
-  :_  this
-  :~  [%give %fact ~[/updates] %hydra-update !>(`update`[%playing public])]
+  `this
+  :::_  this
+  :::~  [%give %fact ~[/updates] %hydra-update !>(`update`[%playing public])]
   :::~  [%give %fact ~[/updates] %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code=code.sketch.action]])]
-  ==
+  ::==
   ::
   ::
   %scry-pals
@@ -109,7 +110,10 @@
   =/  [code=@t =tag]  (~(got by store) +.action)
     ~&  ['%to-public' action sketch]
   =.  store  (~(put by store) +.action [code %public])
-  `this
+  =/  public=(list sketch)  (public-sketches store)
+  :_  this
+  :~  [%give %fact ~[/updates] %hydra-update !>(`update`[%playing public])]
+  ==
   ==
   ::
   %handle-http-request
@@ -269,7 +273,7 @@
   ::%-  (slog 'poke failed!' ~)
   `this
   ::
-  [%subscribtion %to * * ~]
+  [%subscribtion %to * ~]
     ?+  -.sign  (on-agent:def wire sign)
       %watch-ack
     ?~  p.sign
@@ -284,7 +288,7 @@
     ?+    p.cage.sign  (on-agent:def wire sign)
         %hydra-update
         ~&  'hydra update'
-      =/  path=[@t @t pal=@t @t ~]  wire
+      =/  path=[@t @t pal=@t ~]  wire
       =/  =ship        `ship`(slav %p pal.path)  
       =/  update=update  !<(update q.cage.sign)  ::[%playing name=@t code=@t]
       ~&  ['update' update]
