@@ -16,9 +16,7 @@
   ==
 +$  state-0  $:  %0 
                     host=@p
-                    playing=@t         ::id, updated by saving sketch or by sharing code
-                    
-                    ::store=(map @t @t)  ::store=(map id hash/code)
+                    playing=@t
                     store=(map @t [@t tag])
                     dj-pals=(map @p (list sketch))
                     ==
@@ -37,7 +35,6 @@
         ::
 ++  on-init  
   ^-  (quip card _this)
-  ::`this
   ~&  >  "hydra initialized successfully."
   =.  host  our.bowl
   :_  this
@@ -57,8 +54,6 @@
     %0  `this(state old)
   ==
   ::
-  :: add sketch to store
-  :: sketch to play(?)
   :: 
 ++  on-poke  
 |=  [=mark =vase]
@@ -69,18 +64,12 @@
   %hydra-action
   =/  action=action   !<(action vase)
   ?-  -.action
-  ::[%new-sketch id=@t hash=@t]
   %new-sketch
-  =.  store  (~(put by store) name.sketch.action [code.sketch.action %wip])
   ?:  =(name.sketch.action 'sketch_id')
     `this
-  ::=/  public=(list sketch)  (public-sketches store)
+  =.  store  (~(put by store) name.sketch.action [code.sketch.action %wip])
   =.  playing  name.sketch.action
   `this
-  :::_  this
-  :::~  [%give %fact ~[/updates] %hydra-update !>(`update`[%playing public])]
-  :::~  [%give %fact ~[/updates] %hydra-update !>(`update:hydra`[%playing sketch=[name=playing code=code.sketch.action]])]
-  ::==
   ::
   ::
   %scry-pals
@@ -137,10 +126,9 @@
     =/  json  (de:json:html q.u.body.request.inbound-request)
     ~&  json
     =/  =action  (decode:dejs (need json))
-    ~&  action
-    (on-poke [%hydra-action !>(action)])
-    ::instead of on-peek 
-    ::`this
+      (on-poke [%hydra-action !>(action)])
+    ::
+    ::
       %'GET'
     ~&  site
     ?+  site  [(send dump) this]
@@ -149,12 +137,13 @@
       ?:  |(=(~ playing) =('sketch_id' playing))
       :_  this 
       %-  send 
-    [302 ~ [%redirect './hydra/editor/']]
+        [302 ~ [%redirect './hydra/editor/']]
+    ::
       =/  sketch  (trip -:(need (~(get by store) playing)))
       =/  path    (crip (weld "./hydra/editor/?sketch_id=" sketch))
         :_  this
         %-  send 
-        [302 ~ [%redirect path]]
+          [302 ~ [%redirect path]]
     ::
     ::host pages
     ::
@@ -193,26 +182,17 @@
       %-  send 
       [200 ~ [%manx ~(home view state)]]
     ::
-    ::  list of sketches
-    ::
-    :: [%apps %hydra %my-lib ~]
-    ::   =/  sketches  ~(tap in ~(key by store))
-    ::   :_  this
-    ::   %-  send
-    ::   [200 ~ [%json (update-to-json:enjs [%store sketches])]]
+    [%apps %hydra %library * ~]
+    =/  sketch=@t  (snag 3 `(list @t)`site)
+    :_  this
+      %+  welp
+      [%pass /self %agent [our.bowl %hydra] %poke %hydra-action !>([%to-public sketch])]~
+      %-  send 
+      [200 ~ [%manx ~(each-on-change view state)]]
     ==
   ==
 --
 ++  on-peek   on-peek:def
-:: |=  =path
-:: ^-  (unit (unit cage))
-:: ?+  path  (on-peek:def path)
-:: ::current id(?) playing 
-::   [%x %playing ~]
-::   :^  ~  ~  %hydra-update
-::   !>  ^-  update
-::   [%playing =playing =(need (~(get by store) playing))]
-:: ==
 ::
 ++  on-watch  
 |=  =path
@@ -230,7 +210,6 @@
       :_  this
       :~  [%give %fact ~ %hydra-update !>(`update`[%playing ~])]
       ==
-    ::=/  code  -:(need c-sketch)
         ~&  ['update' `update`[%playing sketches]]
     :_  this
     :~  [%give %fact ~ %hydra-update !>(`update`[%playing sketches])]
@@ -300,7 +279,7 @@
     ==
   ==
 ==
-++  on-arvo   ::on-arvo:def
+++  on-arvo 
 |=  [=wire =sign-arvo]
   ^-  (quip card _this)
   ?.  ?=([%eyre %bound *] sign-arvo)

@@ -33,8 +33,8 @@
 ::
 ++  home
   %-  page
-  ;div
-  ;h1: Sketches:
+  ;div.main
+  ;h1: sketches:
   ;div.sketches
     ;*  %+  turn
       ~(tap by store)
@@ -42,23 +42,19 @@
     ^-  manx
       ?:  =(tag.sketch %public)
       ^-  manx
-      ::;div.each(sketch (trip name))
-        ;a(href (weld path (trip hash.sketch))): {(trip name)}
-        ::;h2: album {(scow %tas tag)}
       ;div.each(sketch (trip name))
         ;a(href (weld path (trip hash.sketch))): {(trip name)}
-        ::;h2: album {(scow %tas tag)}
-        ;form
-        ;input(type "hidden", name "to-public", value (trip name));
-        ;button(hx-post ".", hx-target "body"): share with pals
-        ==
+      ==
+      ;div.each(sketch (trip name))
+        ;a(href (weld path (trip hash.sketch))): {(trip name)}
+        ;button(hx-get "./library/{(trip name)}", hx-swap "outerHTML"): share with pals
       ==
   ==
-  ;h1: Pals new sketches:
+  ;h1: pals new sketches:
     ;*  %+  turn
       ~(tap by dj-pals)
     |=  [pal=@p sketches=(list sketch)]
-    ;div.each(pal (trip pal))
+    ;div.pal(pal (trip pal))
       ;h3: {(scow %p pal)}v
       ;*  %+  turn  sketches
       |=  sketch=[name=@t code=@t]
@@ -69,12 +65,60 @@
       ==
   ==
   ==
+++  each-on-change
+^-  manx
+%-  page
+;div.shared 
+;h3: shared
+==
 ++  style
   ^~
   %-  trip
   '''
   :root {
   --measure: 70ch;
+  }
+  .main{
+  margin:           auto;
+  width:            50%;
+  padding:          10px;
+  color:            black;
+  font-family:      monospace;
+  display: flex;
+  flex-direction: column;
+  }
+  .each{
+  display: flex;
+  flex-flow: row wrap;
+  align-items: baseline;
+  }
+  form{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  }
+  button{
+  font-family: monospace;
+  text-align:  center;
+  margin:      5px;
+  border:      none;
+  color:       grey;
+  }
+  .shared{
+  margin:   5px;
+  color:   grey;
+  }
+  button:hover{
+  cursor:      pointer;
+  background:  grey;
+  color:white;
+  }
+  a{
+  color: black;
+  }
+  a:hover{
+  background: black;
+  color:      white;
   }
   '''
 --
