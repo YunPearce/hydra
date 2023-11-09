@@ -331,7 +331,7 @@
 |=  site=(list @t)
 ?+  (rear site)  dump
     %fa-solid-900
-    [200 ~ [%font-ttf q.solidttf]]
+    [200 ~ [%font-ttf q.+.solidttf]]
   ==
 ++  public-sketches 
 |=  =(map @t [@t tag])
