@@ -55,7 +55,7 @@
       ~(tap by dj-pals)
     |=  [pal=@p sketches=(list sketch)]
     ;div.pal(pal (trip pal))
-      ;h3: {(scow %p pal)}v
+      ;h3: {(scow %p pal)}
       ;*  %+  turn  sketches
       |=  sketch=[name=@t code=@t]
       ^-  manx

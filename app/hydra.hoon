@@ -1,15 +1,15 @@
 /-  *hydra
 /+  default-agent, dbug, *hydra, server, schooner, view
-/*  hydraui         %html  /app/hydra/index/html
-/*  hydrajs         %js    /app/hydra/bundle/js
-/*  cssfontawesome  %css   /app/hydra/css/fontawesome/css
-/*  csscodemirror   %css   /app/hydra/css/codemirror/css
-/*  csstne          %css   /app/hydra/css/tomorrow-night-eighties/css
-/*  cssshowhint     %css   /app/hydra/css/show-hint/css
-/*  cssstyle        %css   /app/hydra/css/style/css
-/*  cssmodal        %css   /app/hydra/css/modal/css
-/*  solidttf        %ttf   /app/hydra/webfonts/fa-solid-900/ttf
-/*  solidsvg        %svg   /app/hydra/webfonts/fa-solid-900/svg 
+/*  hydraui         %html  /hydra/index/html  
+/*  hydrajs         %js    /hydra/bundle/js   
+/*  cssfontawesome  %css   /hydra/css/fontawesome/css  
+/*  csscodemirror   %css   /hydra/css/codemirror/css  
+/*  csstne          %css   /hydra/css/tomorrow-night-eighties/css
+/*  cssshowhint     %css   /hydra/css/show-hint/css  
+/*  cssstyle        %css   /hydra/css/style/css  
+/*  cssmodal        %css   /hydra/css/modal/css  
+/*  solidttf        %ttf   /hydra/webfonts/fa-solid-900/ttf 
+/*  solidsvg        %svg   /hydra/webfonts/fa-solid-900/svg
 |%
 +$  versioned-state 
   $%  state-0
@@ -59,11 +59,11 @@
 |=  [=mark =vase]
 ^-  (quip card _this)
 |^
-~&  mark
 ?+  mark  (on-poke:def mark vase)
   %hydra-action
   =/  action=action   !<(action vase)
   ?-  -.action
+  ::
   %new-sketch
   ?:  =(name.sketch.action 'sketch_id')
     `this
@@ -71,33 +71,28 @@
   =.  playing  name.sketch.action
   `this
   ::
-  ::
   %scry-pals
   =/  our  (scot %p our.bowl)
   =/  pals  .^((set ship) %gx /[our]/pals/(scot %da now.bowl)/mutuals/noun)
   ::  remove old-pals(pals from map) from pals 
   =.  pals  `(set @p)`(~(dif in pals) ~(key by dj-pals))
   ::
-  ~&  ['pals' pals]
   =/  pal-cards  %+  turn  ~(tap in pals) 
   |=(pal=@p [%pass /poke/pal/(scot %p pal)/(scot %da now.bowl) %agent [pal %hydra] %poke %hydra-action !>([%get-sketch our.bowl])])
-  ~&  ['pal cards' pal-cards]
   :_  this
   pal-cards
   ::
   %get-sketch
-  ~&  '%get-sketch' 
   =/  dj-pal  (~(get by dj-pals) +.action)
-  ~&  ['dj-pal' dj-pal]
   ?~  dj-pal  
   :_  this
   ::subscribe here to ship.action
   :~  [%pass /subscribtion/to/(scot %p +.action) %agent [+.action %hydra] %watch /updates]
   ==
   `this  
+  ::
   %to-public
   =/  [code=@t =tag]  (~(got by store) +.action)
-    ~&  ['%to-public' action sketch]
   =.  store  (~(put by store) +.action [code %public])
   =/  public=(list sketch)  (public-sketches store)
   :_  this
@@ -124,13 +119,11 @@
       %'POST'
     ?~  body.request.inbound-request  [(send [405 ~ [%stock ~]]) this]
     =/  json  (de:json:html q.u.body.request.inbound-request)
-    ~&  json
     =/  =action  (decode:dejs (need json))
       (on-poke [%hydra-action !>(action)])
     ::
     ::
       %'GET'
-    ~&  site
     ?+  site  [(send dump) this]
     ::
     [%apps %hydra ~]
@@ -155,7 +148,7 @@
     [%apps %hydra %editor %bundle %js ~]
       :_  this 
       %-  send 
-      [200 ~ [%plain (trip hydrajs)]]
+      [200 ~ [%text-javascript hydrajs]]
     ::
     [%apps %hydra %editor %webfonts %ttf * ~]
       :_  this 
@@ -204,13 +197,11 @@
   (on-watch:def path)
   ::
     [%updates ~] 
-    ~&  'comet subscriber here to watch'
     =/  sketches=(list sketch)  (public-sketches store)
     ?~  sketches
       :_  this
       :~  [%give %fact ~ %hydra-update !>(`update`[%playing ~])]
       ==
-        ~&  ['update' `update`[%playing sketches]]
     :_  this
     :~  [%give %fact ~ %hydra-update !>(`update`[%playing sketches])]
 ==
@@ -233,23 +224,20 @@
   ?.  ?=(%poke-ack -.sign)
   (on-agent:def wire sign)
   ?~  p.sign
-    %-  (slog 'poke self success' ~)
     `this
-  %-  (slog 'poke self fail' ~)
   `this
   ::
   [%poke %pal * * ~]
   ?.  ?=(%poke-ack -.sign)
     (on-agent:def wire sign)
   ?~  p.sign
-    ~&  ['poke-pal @p' +.+.wire]
+    ::~&  ['poke-pal @p' +.+.wire]
     ::here if responde adding to pals 
     =/  path=[@t @t pal=@t @t ~]  wire
     =/  =ship  `ship`(slav %p pal.path)
     :_  this
     :~  [%pass /subscribtion/to/(scot %p ship) %agent [ship %hydra] %watch /updates]
     ==
-  ::%-  (slog 'poke failed!' ~)
   `this
   ::
   [%subscribtion %to * ~]

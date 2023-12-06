@@ -1,7 +1,8 @@
 :~
   title+'hydra'
   info+'make it spin'
-  color+0xee.5432
+  color+0xd3.d3d3
+  image+'https://s3.tolmud-tobtud.startram.io/bucket/tolmud-tobtud/2023.12.01..16.41.53-Screenshot%202023-12-01%20at%2011.17.04.png'
   version+[0 0 1]
   website+'https://github.com/SuperCoolYun'
   license+'MIT'
