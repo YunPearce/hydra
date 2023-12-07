@@ -1,6 +1,6 @@
 # hydra
 ```
-  |install ~mastyr-dozzod-marlur %hydra
+  |install ~tolmud-tobtud %hydra
 ```
 [Hydra](https://hydra.ojack.xyz/) ported for Urbit.
 
